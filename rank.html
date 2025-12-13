@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rank System - Minecraft Server</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #4A90E2;
+            --light-blue: #6CABFF;
+            --dark-blue: #357ABD;
+            --accent-blue: #2A7FFF;
+            --green: #10b981;
+            --gold: #fbbf24;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+            --bg-white: #FFFFFF;
+            --card-white: rgba(255, 255, 255, 0.9);
+            --text-dark: #333333;
+            --text-light: #666666;
+            --border-color: rgba(225, 232, 240, 0.7);
+            --shadow: 0 8px 32px rgba(74, 144, 226, 0.15);
+            --shadow-hover: 0 16px 40px rgba(74, 144, 226, 0.25);
+            --radius: 20px;
+            --radius-sm: 12px;
+            --glow: 0 0 20px rgba(74, 144, 226, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #f5f9ff 0%, #e3efff 50%, #d4e6ff 100%);
+            position: relative;
+        }
+
+        /* Background animasi dengan efek kilauan */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(74, 144, 226, 0.1) 0%, rgba(74, 144, 226, 0.05) 70%, transparent 100%);
+            animation: float 20s infinite linear;
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+            animation-duration: 25s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 5s;
+            animation-duration: 20s;
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            left: 15%;
+            animation-delay: 10s;
+            animation-duration: 30s;
+        }
+
+        .bg-circle:nth-child(4) {
+            width: 250px;
+            height: 250px;
+            top: 20%;
+            right: 20%;
+            animation-delay: 15s;
+            animation-duration: 35s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(20px, 30px) rotate(90deg);
+            }
+            50% {
+                transform: translate(-15px, 20px) rotate(180deg);
+            }
+            75% {
+                transform: translate(10px, -15px) rotate(270deg);
+            }
+        }
+
+        /* Efek kilauan partikel */
+        .sparkle {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .sparkle-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: var(--light-blue);
+            border-radius: 50%;
+            opacity: 0;
+            animation: sparkle 3s infinite;
+        }
+
+        @keyframes sparkle {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--text-dark);
+            padding: 3rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--light-blue), var(--accent-blue));
+            animation: header-glow 3s infinite alternate;
+        }
+
+        @keyframes header-glow {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        header h1 {
+            font-size: 3.2rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 5px 15px rgba(74, 144, 226, 0.2);
+            animation: title-glow 2s infinite alternate;
+            position: relative;
+            display: inline-block;
+        }
+
+        header h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue), var(--light-blue));
+            border-radius: 2px;
+            transform: scaleX(0);
+            transform-origin: left;
+            animation: title-underline 3s infinite alternate;
+        }
+
+        @keyframes title-underline {
+            0% {
+                transform: scaleX(0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scaleX(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes title-glow {
+            0% { text-shadow: 0 5px 15px rgba(74, 144, 226, 0.2); }
+            100% { text-shadow: 0 5px 25px rgba(74, 144, 226, 0.4); }
+        }
+
+        header p {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 14px 28px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--light-blue);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+            color: white;
+            border-color: transparent;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-btn.back-btn {
+            background: linear-gradient(135deg, #6CABFF, var(--accent-blue));
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 8px 20px rgba(108, 171, 255, 0.3);
+        }
+
+        .nav-btn.back-btn:hover {
+            background: linear-gradient(135deg, var(--accent-blue), #6CABFF);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 25px rgba(108, 171, 255, 0.4);
+        }
+
+        /* Container Utama */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 25px;
+        }
+
+        /* Section */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-title h2::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+            border-radius: 2px;
+            animation: section-underline 3s infinite alternate;
+        }
+
+        @keyframes section-underline {
+            0% {
+                width: 100px;
+                opacity: 0.7;
+            }
+            100% {
+                width: 150px;
+                opacity: 1;
+            }
+        }
+
+        /* Rank Cards Grid */
+        .ranks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 4rem;
+        }
+
+        .rank-card {
+            background: var(--card-white);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--border-color);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .rank-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.05), rgba(42, 127, 255, 0.1));
+            z-index: -1;
+        }
+
+        .rank-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .rank-card.highlight {
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+        }
+
+        .rank-card.highlight::before {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.15));
+        }
+
+        .rank-card.popular {
+            border-color: var(--accent-blue);
+            transform: scale(1.05);
+        }
+
+        .rank-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 10px 25px rgba(74, 144, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rank-icon::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        .rank-card.highlight .rank-icon {
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
+        }
+
+        .rank-card:nth-child(1) .rank-icon {
+            background: linear-gradient(135deg, var(--bronze), #b56a2b);
+            box-shadow: 0 10px 25px rgba(205, 127, 50, 0.3);
+        }
+
+        .rank-card:nth-child(8) .rank-icon {
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
+        }
+
+        .rank-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+            position: relative;
+        }
+
+        .rank-name::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+            transition: width 0.4s ease;
+        }
+
+        .rank-card:hover .rank-name::after {
+            width: 60%;
+        }
+
+        .rank-card.highlight .rank-name::after {
+            background: linear-gradient(90deg, var(--gold), #f59e0b);
+        }
+
+        .rank-price {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            color: var(--accent-blue);
+            position: relative;
+            display: inline-block;
+            animation: price-pulse 2s infinite alternate;
+        }
+
+        @keyframes price-pulse {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.05);
+            }
+        }
+
+        .rank-card.highlight .rank-price {
+            color: var(--gold);
+        }
+
+        .rank-price::before {
+            content: "Rp ";
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .rank-features {
+            text-align: left;
+            margin-bottom: 25px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .rank-feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            transition: all 0.3s;
+        }
+
+        .rank-feature:hover {
+            transform: translateX(5px);
+            color: var(--text-dark);
+        }
+
+        .rank-feature i {
+            color: var(--green);
+            margin-right: 10px;
+            font-size: 1rem;
+            min-width: 20px;
+            transition: all 0.3s;
+        }
+
+        .rank-feature:hover i {
+            transform: scale(1.2);
+            color: var(--accent-blue);
+        }
+
+        .buy-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .buy-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .buy-btn:hover::before {
+            left: 100%;
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(74, 144, 226, 0.4);
+            background: linear-gradient(135deg, var(--accent-blue), var(--primary-blue));
+        }
+
+        .rank-card.highlight .buy-btn {
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+        }
+
+        .rank-card.highlight .buy-btn:hover {
+            background: linear-gradient(135deg, #f59e0b, var(--gold));
+            box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
+        }
+
+        /* Rank Details Section */
+        .rank-details-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .rank-details-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            animation: slideIn 0.8s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .rank-details-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            box-shadow: 0 15px 35px rgba(74, 144, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rank-details-icon::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        .rank-details-title {
+            text-align: center;
+        }
+
+        .rank-details-title h2 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .rank-details-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+            animation: price-pulse 2s infinite alternate;
+        }
+
+        .rank-details-features {
+            background: var(--card-white);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            padding: 40px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            border-left: 4px solid var(--accent-blue);
+            transition: all 0.3s;
+            animation: featureAppear 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes featureAppear {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.15);
+        }
+
+        .feature-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-title i {
+            color: var(--accent-blue);
+        }
+
+        .feature-desc {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .back-btn {
+            padding: 16px 32px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dark);
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .back-btn:hover::before {
+            left: 100%;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--light-blue);
+            transform: translateY(-3px);
+        }
+
+        .whatsapp-btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .whatsapp-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .whatsapp-btn:hover::before {
+            left: 100%;
+        }
+
+        .whatsapp-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+            background: linear-gradient(135deg, #128C7E, #25D366);
+        }
+
+        /* Tools Section */
+        .tools-container {
+            background: var(--card-white);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            padding: 40px;
+            box-shadow: var(--shadow);
+            margin-top: 40px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .tools-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--text-dark);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .tool-item {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-sm);
+            padding: 25px;
+            text-align: center;
+            border-top: 4px solid var(--accent-blue);
+            transition: all 0.3s;
+            animation: toolAppear 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes toolAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tool-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(74, 144, 226, 0.15);
+        }
+
+        .tool-icon {
+            font-size: 2.5rem;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .tool-item:hover .tool-icon {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .tool-name {
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .tool-desc {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-color);
+            margin-top: 3rem;
+        }
+
+        footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        footer a::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-blue);
+            transition: width 0.3s;
+        }
+
+        footer a:hover::after {
+            width: 100%;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 1.5rem;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(74, 144, 226, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .social-icon:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-5px) rotate(10deg);
+        }
+
+        /* Responsif untuk HP */
+        @media (max-width: 1200px) {
+            .ranks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 992px) {
+            header h1 {
+                font-size: 2.8rem;
+            }
+            
+            .rank-details-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .rank-details-title h2 {
+                font-size: 2.5rem;
+            }
+            
+            .tools-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 2rem 1rem;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            header p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
+            
+            .ranks-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .rank-card {
+                padding: 20px;
+            }
+            
+            .rank-name {
+                font-size: 1.6rem;
+            }
+            
+            .rank-price {
+                font-size: 1.8rem;
+            }
+            
+            .rank-features {
+                font-size: 0.9rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .back-btn, .whatsapp-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+                padding: 14px 24px;
+            }
+            
+            .rank-details-features {
+                padding: 25px;
+            }
+            
+            .rank-details-title h2 {
+                font-size: 2rem;
+            }
+            
+            .rank-details-price {
+                font-size: 2rem;
+            }
+            
+            .feature-item, .tool-item {
+                padding: 18px;
+            }
+            
+            .feature-title {
+                font-size: 1.1rem;
+            }
+            
+            .feature-desc, .tool-desc {
+                font-size: 0.9rem;
+            }
+            
+            .tools-container {
+                padding: 25px;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .tool-name {
+                font-size: 1.2rem;
+            }
+            
+            footer {
+                padding: 2rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .social-icons {
+                gap: 15px;
+            }
+            
+            .social-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.6rem;
+            }
+            
+            .rank-details-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .rank-details-price {
+                font-size: 1.8rem;
+            }
+            
+            .rank-icon, .rank-details-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar kustom */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(74, 144, 226, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-blue);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
+        /* Highlight badge */
+        .highlight-badge {
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            background: var(--gold);
+            color: white;
+            padding: 8px 40px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transform: rotate(45deg);
+            box-shadow: 0 3px 10px rgba(251, 191, 36, 0.3);
+            animation: badgePulse 2s infinite alternate;
+        }
+
+        @keyframes badgePulse {
+            0% {
+                box-shadow: 0 3px 10px rgba(251, 191, 36, 0.3);
+            }
+            100% {
+                box-shadow: 0 3px 15px rgba(251, 191, 36, 0.5);
+            }
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            background: var(--accent-blue);
+            color: white;
+            padding: 8px 40px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transform: rotate(45deg);
+            box-shadow: 0 3px 10px rgba(42, 127, 255, 0.3);
+            animation: badgePulseBlue 2s infinite alternate;
+        }
+
+        @keyframes badgePulseBlue {
+            0% {
+                box-shadow: 0 3px 10px rgba(42, 127, 255, 0.3);
+            }
+            100% {
+                box-shadow: 0 3px 15px rgba(42, 127, 255, 0.5);
+            }
+        }
+
+        /* Animation for rank cards */
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .rank-card {
+            animation: cardAppear 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .rank-card:nth-child(1) { animation-delay: 0.1s; }
+        .rank-card:nth-child(2) { animation-delay: 0.2s; }
+        .rank-card:nth-child(3) { animation-delay: 0.3s; }
+        .rank-card:nth-child(4) { animation-delay: 0.4s; }
+        .rank-card:nth-child(5) { animation-delay: 0.5s; }
+        .rank-card:nth-child(6) { animation-delay: 0.6s; }
+        .rank-card:nth-child(7) { animation-delay: 0.7s; }
+        .rank-card:nth-child(8) { animation-delay: 0.8s; }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+            color: white;
+            padding: 15px 25px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-hover);
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background animasi -->
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+    
+    <!-- Efek kilauan partikel -->
+    <div class="sparkle" id="sparkle"></div>
+    
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <h1><i class="fas fa-crown"></i> Rank System</h1>
+            <p>Tingkatkan pengalaman bermain Minecraft Anda dengan membeli rank eksklusif. Setiap rank memberikan akses ke perintah dan fitur khusus.</p>
+            
+            <div class="nav-container">
+                <a href="index.html" class="nav-btn back-btn">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Perintah
+                </a>
+                <button class="nav-btn active" data-section="ranks">
+                    <i class="fas fa-gem"></i> Daftar Rank
+                </button>
+                <button class="nav-btn" data-section="tools">
+                    <i class="fas fa-tools"></i> Tools OP
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Ranks Section -->
+        <section id="ranks-section" class="section active">
+            <div class="section-title">
+                <h2>Pilih Rank Anda</h2>
+                <p>Rank yang ditandai dengan <span style="color: var(--gold);">⭐</span> adalah yang paling direkomendasikan</p>
+            </div>
+            
+            <div class="ranks-grid" id="ranksContainer">
+                <!-- Rank cards akan diisi oleh JavaScript -->
+            </div>
+        </section>
+
+        <!-- Rank Details Section (Hidden by default) -->
+        <section id="rank-details-section" class="section">
+            <!-- Detail rank akan diisi oleh JavaScript -->
+        </section>
+
+        <!-- Tools Section -->
+        <section id="tools-section" class="section">
+            <div class="section-title">
+                <h2>Skill dan Tools OP</h2>
+                <p>Setiap rank mendapatkan tools dengan enchantment level 15-20</p>
+            </div>
+            
+            <div class="tools-container">
+                <div class="tools-grid">
+                    <div class="tool-item">
+                        <div class="tool-icon"><i class="fas fa-hammer"></i></div>
+                        <div class="tool-name">Pickaxe</div>
+                        <div class="tool-desc">Efficiency V, Unbreaking III, Fortune III, Mending</div>
+                    </div>
+                    
+                    <div class="tool-item">
+                        <div class="tool-icon"><i class="fas fa-tree"></i></div>
+                        <div class="tool-name">Axe</div>
+                        <div class="tool-desc">Efficiency V, Unbreaking III, Sharpness V, Mending</div>
+                    </div>
+                    
+                    <div class="tool-item">
+                        <div class="tool-icon"><i class="fas fa-sword"></i></div>
+                        <div class="tool-name">Sword</div>
+                        <div class="tool-desc">Sharpness V, Fire Aspect II, Unbreaking III, Looting III</div>
+                    </div>
+                    
+                    <div class="tool-item">
+                        <div class="tool-icon"><i class="fas fa-seedling"></i></div>
+                        <div class="tool-name">Hoe</div>
+                        <div class="tool-desc">Efficiency V, Unbreaking III, Fortune III, Mending</div>
+                    </div>
+                    
+                    <div class="tool-item">
+                        <div class="tool-icon"><i class="fas fa-shovel"></i></div>
+                        <div class="tool-name">Shovel</div>
+                        <div class="tool-desc">Efficiency V, Unbreaking III, Silk Touch, Mending</div>
+                    </div>
+                    
+                    <div class="tool-item">
+                        <div class="tool-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="tool-name">Armor Set</div>
+                        <div class="tool-desc">Protection IV, Unbreaking III, Thorns II, Mending</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 40px; padding: 20px; background: rgba(74, 144, 226, 0.1); border-radius: var(--radius-sm); animation: fadeIn 1s ease;">
+                    <h3 style="color: var(--accent-blue); margin-bottom: 10px;"><i class="fas fa-star"></i> Catatan Penting</h3>
+                    <p style="color: var(--text-light);">Semua tools yang diberikan sudah full enchantment level 15-20 dan siap digunakan untuk meningkatkan pengalaman bermain Anda di server!</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Minecraft Server Rank System. Dibuat dengan <i class="fas fa-heart" style="color:#ff4757;"></i> untuk komunitas.</p>
+        <p>Server IP: <strong>play.mcserverku.com</strong> | Website: <a href="#">www.mcserverku.com</a></p>
+        <div class="social-icons">
+            <a href="#" class="social-icon"><i class="fab fa-discord"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+        </div>
+    </footer>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Pesan berhasil disalin!</span>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Data rank
+        const ranks = [
+            {
+                id: 1,
+                name: "RARE",
+                price: "15.000",
+                color: "bronze",
+                icon: "fas fa-gem",
+                features: [
+                    "Tpa",
+                    "Fly",
+                    "Color name",
+                    "Claim Max 1",
+                    "Warp & Sethome",
+                    "Limit Claim 2",
+                    "Limit Block 15,000",
+                    "Sethome 6"
+                ],
+                popular: false,
+                highlight: true // Termurah
+            },
+            {
+                id: 2,
+                name: "EPIC",
+                price: "25.000",
+                color: "silver",
+                icon: "fas fa-shield-alt",
+                features: [
+                    "Tpa",
+                    "Fly",
+                    "Color name",
+                    "Claim Max 1",
+                    "Warp & Sethome",
+                    "Limit Claim 3",
+                    "Limit Block 15,000",
+                    "Repair",
+                    "Sethome 9"
+                ],
+                popular: false,
+                highlight: false
+            },
+            {
+                id: 3,
+                name: "THE COUNT",
+                price: "45.000",
+                color: "blue",
+                icon: "fas fa-crown",
+                features: [
+                    "Tpa",
+                    "Fly",
+                    "Color name",
+                    "Claim Max 1",
+                    "Warp & Sethome",
+                    "Repair",
+                    "Speed",
+                    "Limit Claim 4",
+                    "Limit Block 20,000",
+                    "Sethome 12"
+                ],
+                popular: true,
+                highlight: false
+            },
+            {
+                id: 4,
+                name: "THE DUKE",
+                price: "60.000",
+                color: "blue",
+                icon: "fas fa-chess-king",
+                features: [
+                    "Tpa",
+                    "Fly",
+                    "Color name",
+                    "Claim Max 1",
+                    "Warp & Sethome",
+                    "Repair",
+                    "Nick",
+                    "Speed",
+                    "Anvil",
+                    "Claim Limit 5",
+                    "Claim Block 25,000",
+                    "Sethome 15"
+                ],
+                popular: false,
+                highlight: false
+            },
+            {
+                id: 5,
+                name: "THE VISCOUNT",
+                price: "80.000",
+                color: "blue",
+                icon: "fas fa-landmark",
+                features: [
+                    "Tpa",
+                    "Fly",
+                    "Color name",
+                    "Claim Max 1",
+                    "Warp & Sethome",
+                    "Repair",
+                    "Nick",
+                    "Speed",
+                    "Anvil",
+                    "Heal",
+                    "Enchanted",
+                    "Tp",
+                    "Limit Claim 5",
+                    "Limit Block 30,000",
+                    "Sethome 18"
+                ],
+                popular: false,
+                highlight: false
+            },
+            {
+                id: 6,
+                name: "THE KING",
+                price: "95.000",
+                color: "gold",
+                icon: "fas fa-crown",
+                features: [
+                    "Tpa",
+                    "Fly",
+                    "Color name",
+                    "Claim Max 1",
+                    "Warp & Sethome",
+                    "Repair",
+                    "Nick",
+                    "Speed",
+                    "Anvil",
+                    "Heal",
+                    "Enchanted",
+                    "Ender Chest",
+                    "Tp",
+                    "Limit Claim 6",
+                    "Limit Block 35,000",
+                    "Sethome 21"
+                ],
+                popular: false,
+                highlight: false
+            },
+            {
+                id: 7,
+                name: "THE EMPEROR",
+                price: "105.000",
+                color: "gold",
+                icon: "fas fa-empire",
+                features: [
+                    "Tpa",
+                    "Fly",
+                    "Color name",
+                    "Claim Max 1",
+                    "Sethome",
+                    "Repair",
+                    "Nick",
+                    "Speed",
+                    "Anvil",
+                    "Heal",
+                    "Enchanted",
+                    "Ender Chest",
+                    "Lightning",
+                    "Tp",
+                    "Days Set",
+                    "Limit Claim 8",
+                    "Limit Block 40,000",
+                    "Sethome 24"
+                ],
+                popular: false,
+                highlight: false
+            },
+            {
+                id: 8,
+                name: "THE LORD",
+                price: "195.000",
+                color: "gold",
+                icon: "fas fa-gem",
+                features: [
+                    "Tpa",
+                    "Fly",
+                    "Color name",
+                    "Sethome",
+                    "Repair",
+                    "Nick",
+                    "Speed",
+                    "Anvil",
+                    "Heal",
+                    "Enchanted",
+                    "Ender Chest",
+                    "Lightning",
+                    "Days Set",
+                    "Tp",
+                    "Limit Claim 10",
+                    "Limit Block 50,000",
+                    "Dan lain-lainnya",
+                    "Sethome 27"
+                ],
+                popular: false,
+                highlight: true // Termahal
+            }
+        ];
+
+        // Elemen container
+        const ranksContainer = document.getElementById('ranksContainer');
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const sections = document.querySelectorAll('.section');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const rankDetailsSection = document.getElementById('rank-details-section');
+        const ranksSection = document.getElementById('ranks-section');
+        const toolsSection = document.getElementById('tools-section');
+        const sparkleContainer = document.getElementById('sparkle');
+
+        // Nomor WhatsApp tujuan
+        const whatsappNumber = "6281234567890"; // Ganti dengan nomor WhatsApp yang sebenarnya
+
+        // Fungsi untuk membuat efek kilauan partikel
+        function createSparkles() {
+            for (let i = 0; i < 30; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle-dot';
+                
+                // Random properties
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const delay = Math.random() * 5;
+                const duration = Math.random() * 2 + 2;
+                
+                sparkle.style.left = `${left}%`;
+                sparkle.style.top = `${top}%`;
+                sparkle.style.animationDelay = `${delay}s`;
+                sparkle.style.animationDuration = `${duration}s`;
+                
+                sparkleContainer.appendChild(sparkle);
+            }
+        }
+
+        // Fungsi untuk menampilkan toast notification
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Fungsi untuk merender kartu rank
+        function renderRankCards() {
+            ranksContainer.innerHTML = '';
+            
+            ranks.forEach((rank, index) => {
+                const card = document.createElement('div');
+                card.className = 'rank-card';
+                
+                // Tambahkan class highlight untuk rank termurah dan termahal
+                if (rank.highlight) {
+                    card.classList.add('highlight');
+                }
+                
+                // Tambahkan class popular untuk rank yang popular
+                if (rank.popular) {
+                    card.classList.add('popular');
+                }
+                
+                card.innerHTML = `
+                    ${rank.highlight ? `<div class="highlight-badge">${rank.id === 1 ? 'TERMURAH' : 'TERMAHAL'}</div>` : ''}
+                    ${rank.popular ? `<div class="popular-badge">POPULAR</div>` : ''}
+                    <div class="rank-icon">
+                        <i class="${rank.icon}"></i>
+                    </div>
+                    <h3 class="rank-name">${rank.name}</h3>
+                    <div class="rank-price">${rank.price}</div>
+                    <div class="rank-features">
+                        ${rank.features.slice(0, 5).map(feature => `
+                            <div class="rank-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>${feature}</span>
+                            </div>
+                        `).join('')}
+                        ${rank.features.length > 5 ? `
+                            <div class="rank-feature">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>+${rank.features.length - 5} fitur lainnya</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <button class="buy-btn" data-rank-id="${rank.id}" data-action="details">
+                        <i class="fas fa-info-circle"></i> Lihat Detail
+                    </button>
+                `;
+                
+                ranksContainer.appendChild(card);
+            });
+            
+            // Tambahkan event listener untuk tombol detail
+            document.querySelectorAll('[data-action="details"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const rankId = parseInt(this.getAttribute('data-rank-id'));
+                    showRankDetails(rankId);
+                });
+            });
+        }
+
+        // Fungsi untuk menampilkan detail rank
+        function showRankDetails(rankId) {
+            const rank = ranks.find(r => r.id === rankId);
+            
+            if (!rank) return;
+            
+            // Sembunyikan section rank dan tools
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Tampilkan section detail rank
+            rankDetailsSection.classList.add('active');
+            
+            // Isi konten detail rank
+            rankDetailsSection.innerHTML = `
+                <div class="rank-details-container">
+                    <div class="rank-details-header">
+                        <div class="rank-details-icon" style="background: ${rank.id === 1 ? 'linear-gradient(135deg, var(--bronze), #b56a2b)' : rank.id === 8 ? 'linear-gradient(135deg, var(--gold), #f59e0b)' : 'linear-gradient(135deg, var(--primary-blue), var(--accent-blue))'}">
+                            <i class="${rank.icon}"></i>
+                        </div>
+                        <div class="rank-details-title">
+                            <h2>${rank.name}</h2>
+                            <div class="rank-details-price">Rp ${rank.price}</div>
+                            ${rank.highlight ? `<div style="margin-top: 10px;"><span style="background: ${rank.id === 1 ? 'var(--bronze)' : 'var(--gold)'}; color: white; padding: 5px 15px; border-radius: 20px; font-weight: 600;">${rank.id === 1 ? 'RANK TERMURAH' : 'RANK TERMAHAL'}</span></div>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="rank-details-features">
+                        <h3 style="text-align: center; margin-bottom: 30px; font-size: 1.8rem; color: var(--text-dark);">Fitur dan Keuntungan</h3>
+                        <div class="features-grid">
+                            ${rank.features.map((feature, index) => `
+                                <div class="feature-item" style="animation-delay: ${index * 0.1}s">
+                                    <div class="feature-title">
+                                        <i class="fas fa-check"></i>
+                                        <span>${feature}</span>
+                                    </div>
+                                    <div class="feature-desc">Akses penuh ke fitur ${feature.toLowerCase()} di server</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div style="margin-top: 40px; padding: 20px; background: rgba(74, 144, 226, 0.1); border-radius: var(--radius-sm);">
+                            <h4 style="color: var(--accent-blue); margin-bottom: 10px;"><i class="fas fa-star"></i> Bonus Tambahan</h4>
+                            <p style="color: var(--text-light);">Selain fitur di atas, rank ${rank.name} juga mendapatkan semua tools OP dengan enchantment level 15-20 (Pickaxe, Axe, Sword, Hoe, Shovel, dan Armor Set)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="back-btn" id="backToRanks">
+                            <i class="fas fa-arrow-left"></i> Kembali ke Daftar Rank
+                        </button>
+                        <button class="whatsapp-btn" id="buyRankBtn" data-rank-name="${rank.name}" data-rank-price="${rank.price}">
+                            <i class="fab fa-whatsapp"></i> Beli Rank ${rank.name}
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Tambahkan event listener untuk tombol kembali
+            document.getElementById('backToRanks').addEventListener('click', () => {
+                // Kembali ke section rank
+                rankDetailsSection.classList.remove('active');
+                ranksSection.classList.add('active');
+                
+                // Perbarui navigasi
+                navBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-section') === 'ranks') {
+                        btn.classList.add('active');
+                    }
+                });
+            });
+            
+            // Tambahkan event listener untuk tombol beli
+            document.getElementById('buyRankBtn').addEventListener('click', function() {
+                const rankName = this.getAttribute('data-rank-name');
+                const rankPrice = this.getAttribute('data-rank-price');
+                
+                // Format pesan WhatsApp
+                const message = `Halo admin, saya ingin membeli rank ${rankName} seharga Rp ${rankPrice}. Bagaimana cara pembeliannya?`;
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+                
+                // Buka WhatsApp
+                window.open(whatsappURL, '_blank');
+                
+                // Tampilkan toast
+                showToast(`Membuka WhatsApp untuk membeli rank ${rankName}`);
+            });
+            
+            // Animasi untuk item fitur
+            setTimeout(() => {
+                document.querySelectorAll('.feature-item').forEach((item, index) => {
+                    item.style.animationDelay = `${index * 0.1}s`;
+                });
+            }, 100);
+        }
+
+        // Fungsi untuk navigasi antar section
+        function setupNavigation() {
+            navBtns.forEach(btn => {
+                if (btn.hasAttribute('data-section')) {
+                    btn.addEventListener('click', function() {
+                        const sectionId = this.getAttribute('data-section');
+                        
+                        // Update tombol aktif
+                        navBtns.forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Tampilkan section yang sesuai
+                        sections.forEach(section => {
+                            section.classList.remove('active');
+                        });
+                        
+                        if (sectionId === 'ranks') {
+                            ranksSection.classList.add('active');
+                        } else if (sectionId === 'tools') {
+                            toolsSection.classList.add('active');
+                            
+                            // Animasi untuk tool items
+                            setTimeout(() => {
+                                document.querySelectorAll('.tool-item').forEach((item, index) => {
+                                    item.style.animationDelay = `${index * 0.1}s`;
+                                });
+                            }, 100);
+                        }
+                    });
+                }
+            });
+        }
+
+        // Inisialisasi
+        function init() {
+            createSparkles();
+            renderRankCards();
+            setupNavigation();
+            
+            // Animasi untuk kartu rank
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                    }
+                });
+            }, observerOptions);
+            
+            // Terapkan observer ke semua kartu rank
+            setTimeout(() => {
+                document.querySelectorAll('.rank-card').forEach(card => {
+                    observer.observe(card);
+                });
+            }, 500);
+            
+            // Animasi untuk tool items
+            setTimeout(() => {
+                document.querySelectorAll('.tool-item').forEach((item, index) => {
+                    item.style.animationDelay = `${index * 0.1}s`;
+                });
+            }, 100);
+        }
+
+        // Jalankan inisialisasi saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
