@@ -1275,6 +1275,261 @@
         .toast.show {
             transform: translateX(0);
         }
+
+/* Tambahkan ke bagian CSS yang sudah ada */
+
+/* Efek kartu 3D */
+.rank-card {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+                box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                filter 0.3s ease;
+}
+
+.rank-card:hover {
+    transform: translateY(-15px) rotateX(5deg) rotateY(5deg) scale(1.05);
+    filter: brightness(1.1);
+}
+
+/* Efek partikel saat hover */
+.rank-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                rgba(74, 144, 226, 0.15) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    border-radius: var(--radius);
+    z-index: 1;
+}
+
+.rank-card:hover::after {
+    opacity: 1;
+}
+
+/* Animasi float untuk kartu */
+@keyframes floatCard {
+    0%, 100% {
+        transform: translateY(0) rotateX(0) rotateY(0);
+    }
+    50% {
+        transform: translateY(-10px) rotateX(2deg) rotateY(2deg);
+    }
+}
+
+.rank-card.highlight {
+    animation: floatCard 4s ease-in-out infinite;
+}
+
+/* Efek ripple saat klik */
+.rank-card::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.rank-card:active::before {
+    animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+    }
+    100% {
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+    }
+}
+
+/* Animasi loading untuk kartu */
+@keyframes cardLoad {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.8) rotateX(-20deg);
+    }
+    70% {
+        transform: translateY(-10px) scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0);
+    }
+}
+
+.rank-card {
+    animation: cardLoad 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    opacity: 0;
+}
+
+/* Efek border animasi */
+.rank-card {
+    position: relative;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.rank-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+                var(--primary-blue), 
+                var(--light-blue), 
+                var(--accent-blue),
+                var(--primary-blue));
+    background-size: 400% 400%;
+    border-radius: var(--radius);
+    z-index: -1;
+    opacity: 0;
+    animation: borderGlow 3s ease-in-out infinite;
+    transition: opacity 0.3s ease;
+}
+
+.rank-card:hover::before {
+    opacity: 1;
+}
+
+@keyframes borderGlow {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Animasi ikon berputar */
+.rank-icon {
+    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.rank-card:hover .rank-icon {
+    transform: rotateY(360deg) scale(1.1);
+}
+
+/* Efek teks bergerak */
+.rank-name {
+    background: linear-gradient(
+        90deg,
+        var(--primary-blue),
+        var(--accent-blue),
+        var(--light-blue)
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textShine 3s linear infinite;
+}
+
+@keyframes textShine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+/* Animasi tombol */
+.buy-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.buy-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.buy-btn:focus:not(:active)::after {
+    animation: rippleBtn 1s ease-out;
+}
+
+@keyframes rippleBtn {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    20% {
+        transform: scale(25, 25);
+        opacity: 0.3;
+    }
+    100% {
+        transform: scale(50, 50);
+        opacity: 0;
+    }
+}
+
+/* Efek partikel floating */
+.floating-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--light-blue);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+}
+
+/* Responsif untuk animasi */
+@media (max-width: 768px) {
+    .rank-card:hover {
+        transform: translateY(-10px) scale(1.03);
+    }
+    
+    .rank-card.highlight {
+        animation: floatCardMobile 4s ease-in-out infinite;
+    }
+    
+    @keyframes floatCardMobile {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-8px);
+        }
+    }
+}
+
+/* Efek ripple untuk tombol */
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -1612,7 +1867,7 @@
         const sparkleContainer = document.getElementById('sparkle');
 
         // Nomor WhatsApp tujuan
-        const whatsappNumber = "6281234567890"; // Ganti dengan nomor WhatsApp yang sebenarnya
+        const whatsappNumber = "6285175080455"; // Ganti dengan nomor WhatsApp yang sebenarnya
 
         // Fungsi untuk membuat efek kilauan partikel
         function createSparkles() {
@@ -1643,6 +1898,196 @@
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
+        }
+
+        // Fungsi untuk membuat partikel
+        function createParticle(x, y, parent) {
+            const particle = document.createElement('div');
+            particle.className = 'floating-particle';
+            
+            // Posisi
+            const rect = parent.getBoundingClientRect();
+            const particleX = x - rect.left;
+            const particleY = y - rect.top;
+            
+            particle.style.left = `${particleX}px`;
+            particle.style.top = `${particleY}px`;
+            
+            // Warna acak
+            const colors = ['#4A90E2', '#6CABFF', '#2A7FFF', '#357ABD'];
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Ukuran acak
+            const size = Math.random() * 3 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            parent.appendChild(particle);
+            
+            // Animasi partikel
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 2 + 1;
+            const distance = Math.random() * 30 + 20;
+            
+            let currentX = 0;
+            let currentY = 0;
+            let opacity = 1;
+            
+            function animateParticle() {
+                currentX += Math.cos(angle) * speed;
+                currentY += Math.sin(angle) * speed;
+                opacity -= 0.02;
+                
+                particle.style.transform = `translate(${currentX}px, ${currentY}px)`;
+                particle.style.opacity = opacity;
+                
+                if (opacity > 0 && 
+                    Math.abs(currentX) < distance && 
+                    Math.abs(currentY) < distance) {
+                    requestAnimationFrame(animateParticle);
+                } else {
+                    particle.remove();
+                }
+            }
+            
+            animateParticle();
+        }
+
+        // Fungsi untuk efek ripple saat klik
+        function createRippleEffect(event, element) {
+            const ripple = document.createElement('div');
+            const rect = element.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.7);
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                width: ${size}px;
+                height: ${size}px;
+                top: ${y}px;
+                left: ${x}px;
+                pointer-events: none;
+                z-index: 1;
+            `;
+            
+            element.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        // Efek suara hover (opsional)
+        function playHoverSound() {
+            // Buat audio context untuk efek suara
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                console.log('Audio context not supported');
+            }
+        }
+
+        // Fungsi untuk mengatur animasi kartu
+        function setupCardAnimations() {
+            const cards = document.querySelectorAll('.rank-card');
+            
+            // Track mouse position untuk efek partikel
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+                    
+                    card.style.setProperty('--mouse-x', `${x}%`);
+                    card.style.setProperty('--mouse-y', `${y}%`);
+                    
+                    // Buat partikel floating saat mouse bergerak
+                    if (Math.random() > 0.7) {
+                        createParticle(e.clientX, e.clientY, card);
+                    }
+                });
+                
+                card.addEventListener('mouseenter', () => {
+                    // Tambahkan efek getar ringan
+                    card.style.animation = 'none';
+                    setTimeout(() => {
+                        card.style.animation = '';
+                    }, 10);
+                    
+                    // Efek suara (opsional)
+                    playHoverSound();
+                });
+                
+                card.addEventListener('click', (e) => {
+                    // Efek ripple saat klik
+                    createRippleEffect(e, card);
+                    
+                    // Efek bounce ringan
+                    card.style.transform = 'translateY(-15px) scale(0.95)';
+                    setTimeout(() => {
+                        card.style.transform = 'translateY(-15px) scale(1.05)';
+                    }, 150);
+                });
+            });
+        }
+
+        // Fungsi untuk animasi scroll
+        function setupScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        // Delay animasi berdasarkan urutan
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0) rotateX(0)';
+                        }, index * 100);
+                        
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            // Terapkan ke semua kartu rank
+            document.querySelectorAll('.rank-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        // Efek paralaks saat scroll
+        function setupParallaxEffect() {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const rate = scrolled * -0.5;
+                
+                document.querySelectorAll('.bg-circle').forEach((circle, index) => {
+                    const speed = 0.2 + (index * 0.1);
+                    circle.style.transform = `translateY(${rate * speed}px)`;
+                });
+            });
         }
 
         // Fungsi untuk merender kartu rank
@@ -1840,26 +2285,12 @@
             renderRankCards();
             setupNavigation();
             
-            // Animasi untuk kartu rank
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                    }
-                });
-            }, observerOptions);
-            
-            // Terapkan observer ke semua kartu rank
+            // Setup animasi untuk kartu
             setTimeout(() => {
-                document.querySelectorAll('.rank-card').forEach(card => {
-                    observer.observe(card);
-                });
-            }, 500);
+                setupCardAnimations();
+                setupScrollAnimations();
+                setupParallaxEffect();
+            }, 100);
             
             // Animasi untuk tool items
             setTimeout(() => {
