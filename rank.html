@@ -976,13 +976,21 @@
             color: var(--primary-blue);
             font-size: 1.2rem;
             transition: all 0.3s;
-            text-decoration: none;
+            text-decoration: none !important;
+            position: relative;
+        }
+
+        /* Hapus efek underline untuk semua social icon */
+        .social-icon::after,
+        .social-icon:hover::after {
+            display: none !important;
         }
 
         .social-icon:hover {
             background: var(--primary-blue);
             color: white;
             transform: translateY(-5px) rotate(10deg);
+            text-decoration: none !important;
         }
 
         /* Responsif untuk HP */
@@ -1642,10 +1650,9 @@
         <p>© 2025 Minecraft Server Rank System. Dibuat dengan <i class="fas fa-heart" style="color:#ff4757;"></i> untuk komunitas.</p>
         <p>Server IP: <strong>play.mcserverku.com</strong> | Website: <a href="#">www.mcserverku.com</a></p>
         <div class="social-icons">
-            <a href="#" class="social-icon"><i class="fab fa-discord"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <a href="https://discord.gg/baScgacq87" class="social-icon"><i class="fab fa-discord"></i></a>
+            <a href="https://chat.whatsapp.com/JqrptiY2eKz9WIfLoNCbGN?mode=hqrt1" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.tiktok.com/@leotra223" class="social-icon"><i class="fab fa-tiktok"></i></a>
         </div>
     </footer>
 
